@@ -160,4 +160,29 @@ public class BasicTest extends UnitTest {
 	    assertEquals(4, Comment.count());
 	}
 
+    @Test
+    public void testTags(){
+        User bob = new User("bob@gmail.com", "secret", "Bob").save();
+
+        Post bobPost = new Post(bob, "My first post", "Hello World!").save();
+        Post anotherBobPost = new Post(bob, "Hop", "Hello World!").save();
+
+        assertEquals(0, Post.findTaggedWith("Red").size());
+
+        bobPost.tagItWith("Red").tagItWith("Blue").save();
+        anotherBobPost.tagItWith("Red").tagItWith("Green").save();
+
+        assertEquals(2, Post.findTaggedWith("Red").size());
+        assertEquals(1, Post.findTaggedWith("Blue").size());
+        assertEquals(1, Post.findTaggedWith("Green").size());
+
+        assertEquals(1, Post.findTaggedWith("Red", "Blue").size());
+        assertEquals(1, Post.findTaggedWith("Red", "Green").size());
+        assertEquals(0, Post.findTaggedWith("Red", "Green", "Blue").size());
+        assertEquals(0, Post.findTaggedWith("Green", "Blue").size());
+
+        // List<Map> cloud = Tag.getCloud();
+        // assertEquals("[{tag=Blue, pound=1}, {tag=Green, pound=1}, {tag=Red, pound=2}]", cloud.toString());
+    }
+
 }
